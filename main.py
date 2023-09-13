@@ -2,38 +2,29 @@ import logging
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 
-from dotenv import load_dotenv
-load_dotenv()
-import os 
 # Set up logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-logger = logging.getLogger(__name__)
 
-# Define a function to handle messages
+# Define your bot's token here
+TOKEN = 'YOUR_BOT_TOKEN'
+
+# Create an Updater
+updater = Updater(token=TOKEN, use_context=True)
+
+# Define a command handler
+def start(update: Update, context: CallbackContext) -> None:
+    update.message.reply_text('Hello! I am your echo bot.')
+
+# Define an echo message handler
 def echo(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(update.message.text)
 
-def main() -> None:
-    # Replace 'YOUR_BOT_TOKEN' and 'YOUR_WEBHOOK_URL' with your actual bot token and webhook URL.
-    bot_token = os.getenv('BOT_TOKEN')
-    webhook_url = os.getenv('WEBHOOK_URL')
+# Create dispatchers and handlers
+dispatcher = updater.dispatcher
+dispatcher.add_handler(CommandHandler('start', start))
+dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
 
-    # Create the Updater with the bot token
-    updater = Updater(token=bot_token, use_context=True)
-
-    # Get the dispatcher to register handlers
-    dispatcher = updater.dispatcher
-
-    # Register a message handler
-    message_handler = MessageHandler(Filters.text & ~Filters.command, echo)
-    dispatcher.add_handler(message_handler)
-
-    # Set up the webhook
-    updater.start_webhook(listen="0.0.0.0", port=8443, url_path=bot_token)
-    updater.bot.setWebhook(f"{webhook_url}/{bot_token}")
-
-    # Start the Bot
-    updater.idle()
-
+# Start the bot
 if __name__ == '__main__':
-    main()
+    updater.start_polling()
+    updater.idle()
