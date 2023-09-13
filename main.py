@@ -15,7 +15,7 @@ def echo(update: Update, context: CallbackContext) -> None:
 
 def main() -> None:
     # Replace 'YOUR_BOT_TOKEN' and 'YOUR_WEBHOOK_URL' with your actual bot token and webhook URL.
-    bot_token = os.getnev('BOT_TOKEN')
+    bot_token = os.getenev('BOT_TOKEN')
     webhook_url = os.getenv('WEBHOOK_URL')
 
     # Create the Updater with the bot token
